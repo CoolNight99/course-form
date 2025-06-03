@@ -1,0 +1,1 @@
+courseForm.mount("#app");
