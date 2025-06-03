@@ -26,10 +26,16 @@
     </form>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInAnonymously, onAuthStateChanged, User } from "firebase/auth";
+
+interface FormData {
+  email: string;
+  course: string;
+  startDate: string;
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyCV2wb4ny9H_EHdpsUeFyYA_VkldCYtncc",
@@ -45,7 +51,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let currentUser = null;
+let currentUser: User | null = null;
 
 signInAnonymously(auth);
 onAuthStateChanged(auth, (user) => {
@@ -66,7 +72,7 @@ export default {
         email: "",
         course: "",
         startDate: "",
-      },
+      } as FormData,
       submitted: false,
       success: false,
       today: `${year}-${month}-${day}`,
@@ -74,14 +80,14 @@ export default {
   },
 
   computed: {
-    emailValid() {
+    emailValid(): boolean {
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       return emailPattern.test(this.form.email);
     },
   },
 
   methods: {
-    async submitForm() {
+    async submitForm(): Promise<void> {
       this.submitted = true;
 
       if (this.emailValid && this.form.course && this.form.startDate) {
@@ -98,7 +104,7 @@ export default {
       }
     },
 
-    async saveToFirebase() {
+    async saveToFirebase(): Promise<void> {
       if (!currentUser) {
         throw new Error("User not authenticated");
       }
