@@ -30,6 +30,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth, signInAnonymously, onAuthStateChanged, User } from "firebase/auth";
+import { validateEmail } from "../utils/validateEmail"
 
 interface FormData {
   email: string;
@@ -81,8 +82,7 @@ export default {
 
   computed: {
     emailValid(): boolean {
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      return emailPattern.test(this.form.email);
+            return validateEmail(this.form.email);
     },
   },
 
