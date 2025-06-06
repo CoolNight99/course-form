@@ -6,6 +6,7 @@
         <input type="email" id="email" v-model="form.email" placeholder="Enter your email">
       </div>
       <small v-if="submitted && !emailValid">Please enter a valid email address.</small>
+      <small v-if="submitted && !emailMatch && emailValid">Email does not match. Please try again.</small>
       <div class="form-row">
         <label for="course">Course:</label>
           <select id="course" v-model="form.course">
@@ -29,10 +30,7 @@
 <script lang="ts">
 import { collection, addDoc } from "firebase/firestore";
 import { validateEmail } from "../utils/validateEmail"
-import { getAuth } from "firebase/auth";
-
-const auth = getAuth();
-const currentUser = auth.currentUser;
+import { auth, db } from "../firebase";
 
 interface FormData {
   email: string;
@@ -59,17 +57,27 @@ export default {
     };
   },
 
+  created() {
+    if (!auth.currentUser) {
+        this.$router.push({ name: 'Login' });
+    }
+  },
+
   computed: {
     emailValid(): boolean {
         return validateEmail(this.form.email);
     },
+
+    emailMatch(): boolean {
+        return auth.currentUser ? auth.currentUser.email === this.form.email : false
+    }
   },
 
   methods: {
     async submitForm(): Promise<void> {
       this.submitted = true;
 
-      if (this.emailValid && this.form.course && this.form.startDate) {
+      if (this.emailValid && this.form.course && this.form.startDate && this.emailMatch) {
         this.success = true;
         await this.saveToFirebase();
 
@@ -79,28 +87,27 @@ export default {
           this.form.startDate = "";
           this.submitted = false;
           this.success = false;
+          this.$router.push({ name: 'Login' });
         }, 2000);
       }
     },
 
     async saveToFirebase(): Promise<void> {
-      if (!currentUser) {
-        throw new Error("User not authenticated");
-      }
+        const currentUser = auth.currentUser;
 
-      try {
-        await addDoc(collection(db, "submissions"), {
-          email: this.form.email,
-          course: this.form.course,
-          startDate: this.form.startDate,
-          timestamp: new Date(),
-          author_uid: currentUser.uid
-        });
-      } 
-      
-      catch (e) {
-        console.error("Error adding document: ", e);
-      }
+        try {
+            await addDoc(collection(db, "submissions"), {
+            email: this.form.email,
+            course: this.form.course,
+            startDate: this.form.startDate,
+            timestamp: new Date(),
+            author_uid: currentUser ? currentUser.uid : null
+            });
+        } 
+        
+        catch (e) {
+            console.error("Error adding document: ", e);
+        }
     },
   },
 };

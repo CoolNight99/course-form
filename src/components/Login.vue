@@ -19,24 +19,9 @@
     </div>
 </template>
 <script lang="ts">
-import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 import { validateEmail } from '../utils/validateEmail';
-
-// configure Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCV2wb4ny9H_EHdpsUeFyYA_VkldCYtncc",
-  authDomain: "course-form-c5a4b.firebaseapp.com",
-  projectId: "course-form-c5a4b",
-  storageBucket: "course-form-c5a4b.firebasestorage.app",
-  messagingSenderId: "114852724417",
-  appId: "1:114852724417:web:18469198c36f119b979e40",
-  measurementId: "G-JFMV72M8TN",
-};
-
-// Firebase initialization
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 
 interface FormData {
     email: string;
