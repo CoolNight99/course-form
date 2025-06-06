@@ -8,13 +8,11 @@ import './assets/styles.css'
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: "/", component: Login, name: "Login"},
-        { path: "/course-form", component: CourseForm, name: "CourseForm"}
+        { path: "/", component: Login, name: "Login" },
+        { path: "/course-form", component: CourseForm, name: "CourseForm" }
     ]
 });
 
 const app = createApp(App);
-app.component('Login', Login);
-app.component('CourseForm', CourseForm);
 app.use(router);
 app.mount('#app')
