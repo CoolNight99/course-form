@@ -1,3 +1,3 @@
 <template>
-  <course-form></course-form>
+  <router-view></router-view>
 </template>

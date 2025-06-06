@@ -4,7 +4,6 @@ body {
     align-items: center;
     justify-content: center;
     margin: auto;
-    height: 100vh;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     background-image: url("./premium_photo-1674048382856-aa9984d8b391.avif");
 }
@@ -15,6 +14,11 @@ form {
     box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    margin-bottom: 5rem;
+}
+
+h1, h2 {
+    text-align: center
 }
 
 .form-row {

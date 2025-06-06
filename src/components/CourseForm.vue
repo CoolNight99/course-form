@@ -3,7 +3,7 @@
     <form @submit.prevent="submitForm" id="form" novalidate>
       <div class="form-row">
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="form.email" placeholder="Enter your email" required>
+        <input type="email" id="email" v-model="form.email" placeholder="Enter your email">
       </div>
       <small v-if="submitted && !emailValid">Please enter a valid email address.</small>
       <div class="form-row">
@@ -27,39 +27,18 @@
   </div>
 </template>
 <script lang="ts">
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAuth, signInAnonymously, onAuthStateChanged, User } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore";
 import { validateEmail } from "../utils/validateEmail"
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth();
+const currentUser = auth.currentUser;
 
 interface FormData {
   email: string;
   course: string;
   startDate: string;
 }
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCV2wb4ny9H_EHdpsUeFyYA_VkldCYtncc",
-  authDomain: "course-form-c5a4b.firebaseapp.com",
-  projectId: "course-form-c5a4b",
-  storageBucket: "course-form-c5a4b.firebasestorage.app",
-  messagingSenderId: "114852724417",
-  appId: "1:114852724417:web:18469198c36f119b979e40",
-  measurementId: "G-JFMV72M8TN",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-let currentUser: User | null = null;
-
-signInAnonymously(auth);
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUser = user;
-  }
-});
 
 export default {
   data() {
@@ -82,7 +61,7 @@ export default {
 
   computed: {
     emailValid(): boolean {
-            return validateEmail(this.form.email);
+        return validateEmail(this.form.email);
     },
   },
 
