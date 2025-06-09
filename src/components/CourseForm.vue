@@ -23,7 +23,7 @@
       </div>
       <small v-if="submitted && !form.startDate">Please select a start date.</small>
       <button type="submit">Submit</button>
-      <p v-if="success" class="details-saved">Your details have been saved. Thank you.</p>
+      <p v-if="success" class="details-saved">Form details have been saved. Thank you.</p>
     </form>
   </div>
 </template>
