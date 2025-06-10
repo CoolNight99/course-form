@@ -41,11 +41,10 @@ export default {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    const email = auth.currentUser.email;
 
     return {
       form: {
-        email: auth.currentUser.email,
+        email: "",
         course: "",
         startDate: "",
       } as FormData,
@@ -58,6 +57,10 @@ export default {
   created() {
     if (!auth.currentUser) {
       this.$router.push({ name: 'Login' });
+    }
+
+    else {
+      this.form.email = auth.currentUser.email;
     }
   },
 
