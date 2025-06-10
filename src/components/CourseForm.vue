@@ -3,18 +3,16 @@
     <form @submit.prevent="submitForm" id="form" novalidate>
       <div class="form-row">
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="form.email" placeholder="Enter your email">
+        <input type="email" id="email" v-model="form.email" disabled>
       </div>
-      <small v-if="submitted && !emailValid">Please enter a valid email address.</small>
-      <small v-if="submitted && !emailMatch && emailValid">Email does not match. Please try again.</small>
       <div class="form-row">
         <label for="course">Course:</label>
-          <select id="course" v-model="form.course">
-            <option value="" disabled>Select a course</option>
-            <option value="vuejs">Vue.js</option>
-            <option value="reactjs">React.js</option>
-            <option value="angular">Angular</option>
-          </select>
+        <select id="course" v-model="form.course">
+          <option value="" disabled>Select a course</option>
+          <option value="vuejs">Vue.js</option>
+          <option value="reactjs">React.js</option>
+          <option value="angular">Angular</option>
+        </select>
       </div>
       <small v-if="submitted && !form.course">Please select a course.</small>
       <div class="form-row">
@@ -29,7 +27,6 @@
 </template>
 <script lang="ts">
 import { collection, addDoc } from "firebase/firestore";
-import { validateEmail } from "../utils/validateEmail"
 import { auth, db } from "../firebase";
 
 interface FormData {
@@ -44,10 +41,11 @@ export default {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
+    const email = auth.currentUser.email;
 
     return {
       form: {
-        email: "",
+        email: auth.currentUser.email,
         course: "",
         startDate: "",
       } as FormData,
@@ -59,17 +57,7 @@ export default {
 
   created() {
     if (!auth.currentUser) {
-        this.$router.push({ name: 'Login' });
-    }
-  },
-
-  computed: {
-    emailValid(): boolean {
-        return validateEmail(this.form.email);
-    },
-
-    emailMatch(): boolean {
-        return auth.currentUser ? auth.currentUser.email === this.form.email : false
+      this.$router.push({ name: 'Login' });
     }
   },
 
@@ -77,7 +65,7 @@ export default {
     async submitForm(): Promise<void> {
       this.submitted = true;
 
-      if (this.emailValid && this.form.course && this.form.startDate && this.emailMatch) {
+      if (this.form.course && this.form.startDate) {
         this.success = true;
         await this.saveToFirebase();
 
@@ -93,21 +81,21 @@ export default {
     },
 
     async saveToFirebase(): Promise<void> {
-        const currentUser = auth.currentUser;
+      const currentUser = auth.currentUser;
 
-        try {
-            await addDoc(collection(db, "submissions"), {
-            email: this.form.email,
-            course: this.form.course,
-            startDate: this.form.startDate,
-            timestamp: new Date(),
-            author_uid: currentUser ? currentUser.uid : null
-            });
-        } 
-        
-        catch (e) {
-            console.error("Error adding document: ", e);
-        }
+      try {
+        await addDoc(collection(db, "submissions"), {
+          email: this.form.email,
+          course: this.form.course,
+          startDate: this.form.startDate,
+          timestamp: new Date(),
+          author_uid: currentUser ? currentUser.uid : null
+        });
+      }
+
+      catch (e) {
+        console.error("Error adding document: ", e);
+      }
     },
   },
 };
