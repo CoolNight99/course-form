@@ -8,7 +8,7 @@
             <div class="login-form">
                 <button type="submit" @click="login" :disabled="loading" class="login-btn"><img src="../assets/google icon.png" class="google-logo"><span>Log in with Google</span></img></button>
                 <small v-if="loginError">Sign-in failed. Please try again.</small>
-                <small v-if="attemptedLogin && !whitelisted">Your email is not whitelisted. You cannot access the form.</small>
+                <small v-if="attemptedLogin && !whitelisted" class="not-whitelisted">Your email is not whitelisted. You cannot access the form.</small>
             </div>
             <p v-if="success" class="details-saved">Login successful. Thank you.</p>
         </form>
